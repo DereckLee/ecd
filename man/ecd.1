@@ -39,8 +39,10 @@ Detect file encoding(s)
 .SH EXTRA
 EXAMPLES:
   ecd check \-f man.txt              Detect encoding of one file
-  ecd check \-d ./src                Scan directory recursively
-  ecd check \-d . \-p "*.rs"          Only Rust source files
+  ecd check \-d ./src                Scan directory (top level only)
+  ecd check \-r \-p "*.java"          Find Java files under current directory
+  ecd check \-r \-d . \-p "*.java"     Recursively find Java files in a path
+  ecd check \-d . \-p "*.rs"          Filter by glob pattern
   ecd check \-f a.txt \-f b.txt       Multiple files
   ecd check \-d . \-i ascii \-v        Skip ASCII, show stats
 .SH VERSION

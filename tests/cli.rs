@@ -67,7 +67,7 @@ fn single_gbk_file() {
 fn directory_scan_batch_format() {
     let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures");
     bin()
-        .args(["check", "-d"])
+        .args(["check", "-r", "-d"])
         .arg(&dir)
         .assert()
         .success()
@@ -76,10 +76,46 @@ fn directory_scan_batch_format() {
 }
 
 #[test]
+fn recursive_pattern_filters_nested_files() {
+    let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures");
+    bin()
+        .args(["check", "-r", "-d"])
+        .arg(&dir)
+        .args(["-p", "gbk.bin"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("gbk.bin"));
+}
+
+#[test]
+fn shallow_scan_skips_subdirectories() {
+    let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures");
+    bin()
+        .args(["check", "-d"])
+        .arg(&dir)
+        .args(["-p", "gbk.bin", "-q"])
+        .assert()
+        .success()
+        .stdout(predicate::str::is_empty());
+}
+
+#[test]
+fn shallow_scan_finds_top_level_pattern() {
+    let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures");
+    bin()
+        .args(["check", "-d"])
+        .arg(&dir)
+        .args(["-p", "utf8.txt"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("utf8.txt"));
+}
+
+#[test]
 fn batch_output_right_aligns_labels() {
     let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures");
     let output = bin()
-        .args(["--color=never", "check", "-d"])
+        .args(["--color=never", "check", "-r", "-d"])
         .arg(&dir)
         .assert()
         .success()
@@ -97,7 +133,7 @@ fn batch_output_right_aligns_labels() {
 fn color_always_emits_ansi() {
     let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("src");
     bin()
-        .args(["--color=always", "check", "-d"])
+        .args(["--color=always", "check", "-r", "-d"])
         .arg(&dir)
         .assert()
         .success()
@@ -108,7 +144,7 @@ fn color_always_emits_ansi() {
 fn color_never_no_ansi() {
     let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("src");
     bin()
-        .args(["--color=never", "check", "-d"])
+        .args(["--color=never", "check", "-r", "-d"])
         .arg(&dir)
         .assert()
         .success()
@@ -138,7 +174,15 @@ fn binary_file_is_skip_in_batch_mode() {
 fn ignore_encoding_filters_output() {
     let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures");
     bin()
-        .args(["check", "-d", &dir.to_string_lossy(), "-i", "ascii", "-q"])
+        .args([
+            "check",
+            "-r",
+            "-d",
+            &dir.to_string_lossy(),
+            "-i",
+            "ascii",
+            "-q",
+        ])
         .assert()
         .success()
         .stdout(predicate::str::is_empty());
@@ -151,6 +195,28 @@ fn no_input_errors() {
         .assert()
         .failure()
         .stderr(predicate::str::contains("no input"));
+}
+
+#[test]
+fn pattern_without_dir_defaults_to_cwd() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    bin()
+        .current_dir(&root)
+        .args(["check", "-r", "-p", "Cargo.toml"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Cargo.toml"));
+}
+
+#[test]
+fn recursive_without_dir_defaults_to_cwd() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    bin()
+        .current_dir(&root)
+        .args(["check", "-r", "-p", "*.rs"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("src/main.rs").or(predicate::str::contains("main.rs")));
 }
 
 #[test]

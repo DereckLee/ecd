@@ -4,7 +4,7 @@
 .SH NAME
 ecd\-check \- Detect file encoding(s)
 .SH SYNOPSIS
-\fBecd check\fR [\fB\-\-color\fR] [\fB\-f\fR|\fB\-\-file\fR] [\fB\-d\fR|\fB\-\-dir\fR] [\fB\-p\fR|\fB\-\-pattern\fR] [\fB\-i\fR|\fB\-\-ignore\fR] [\fB\-e\fR|\fB\-\-exclude\fR] [\fB\-\-no\-default\-excludes\fR] [\fB\-j\fR|\fB\-\-jobs\fR] [\fB\-v\fR|\fB\-\-verbose\fR] [\fB\-q\fR|\fB\-\-quiet\fR] [\fB\-h\fR|\fB\-\-help\fR] 
+\fBecd check\fR [\fB\-\-color\fR] [\fB\-f\fR|\fB\-\-file\fR] [\fB\-d\fR|\fB\-\-dir\fR] [\fB\-r\fR|\fB\-\-recursive\fR] [\fB\-p\fR|\fB\-\-pattern\fR] [\fB\-i\fR|\fB\-\-ignore\fR] [\fB\-e\fR|\fB\-\-exclude\fR] [\fB\-\-no\-default\-excludes\fR] [\fB\-j\fR|\fB\-\-jobs\fR] [\fB\-v\fR|\fB\-\-verbose\fR] [\fB\-q\fR|\fB\-\-quiet\fR] [\fB\-h\fR|\fB\-\-help\fR] 
 .SH DESCRIPTION
 Detect file encoding(s)
 .SH OPTIONS
@@ -28,10 +28,13 @@ always: Always colorize (ANSI escapes; useful for piping to `less \-R`)
 File(s) to check (repeatable)
 .TP
 \fB\-d\fR, \fB\-\-dir\fR \fI<PATH>\fR
-Directory/directories to scan recursively (repeatable)
+Directory/directories to scan (repeatable); defaults to `.` when `\-r` or `\-p` is given alone
 .TP
-\fB\-p\fR, \fB\-\-pattern\fR \fI<PATTERN>\fR [default: **/*]
-Glob pattern to filter files when scanning directories
+\fB\-r\fR, \fB\-\-recursive\fR
+Recursively scan into subdirectories (used with `\-d`, or current directory when `\-d` is omitted)
+.TP
+\fB\-p\fR, \fB\-\-pattern\fR \fI<GLOB>\fR
+Glob pattern to filter files (`*.java`; with `\-r` matches at any depth)
 .TP
 \fB\-i\fR, \fB\-\-ignore\fR \fI<ENC>\fR
 Ignore files with this encoding (case\-insensitive)

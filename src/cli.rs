@@ -9,8 +9,10 @@ pub const DEFAULT_EXCLUDES: &[&str] = &[".git", "node_modules", "target"];
 pub const AFTER_HELP: &str = "\
 EXAMPLES:
   ecd check -f man.txt              Detect encoding of one file
-  ecd check -d ./src                Scan directory recursively
-  ecd check -d . -p \"*.rs\"          Only Rust source files
+  ecd check -d ./src                Scan directory (top level only)
+  ecd check -r -p \"*.java\"          Find Java files under current directory
+  ecd check -r -d . -p \"*.java\"     Recursively find Java files in a path
+  ecd check -d . -p \"*.rs\"          Filter by glob pattern
   ecd check -f a.txt -f b.txt       Multiple files
   ecd check -d . -i ascii -v        Skip ASCII, show stats
 ";
@@ -51,13 +53,17 @@ pub struct CheckArgs {
     #[arg(short = 'f', long = "file", value_name = "PATH")]
     pub files: Vec<PathBuf>,
 
-    /// Directory/directories to scan recursively (repeatable)
+    /// Directory/directories to scan (repeatable); defaults to `.` when `-r` or `-p` is given alone
     #[arg(short = 'd', long = "dir", value_name = "PATH")]
     pub dirs: Vec<PathBuf>,
 
-    /// Glob pattern to filter files when scanning directories
-    #[arg(short = 'p', long = "pattern", default_value = "**/*")]
-    pub pattern: String,
+    /// Recursively scan into subdirectories (used with `-d`, or current directory when `-d` is omitted)
+    #[arg(short = 'r', long = "recursive")]
+    pub recursive: bool,
+
+    /// Glob pattern to filter files (`*.java`; with `-r` matches at any depth)
+    #[arg(short = 'p', long = "pattern", value_name = "GLOB")]
+    pub pattern: Option<String>,
 
     /// Ignore files with this encoding (case-insensitive)
     #[arg(short = 'i', long = "ignore", value_name = "ENC")]
@@ -94,7 +100,24 @@ impl CheckArgs {
         excludes
     }
 
+    /// Glob pattern for file filtering; `*` when `-p` is omitted.
+    pub fn effective_pattern(&self) -> &str {
+        self.pattern.as_deref().unwrap_or("*")
+    }
+
+    /// Scan roots: explicit `-d` paths, or `.` when `-r`/`-p` is used without `-d`.
+    pub fn effective_dirs(&self) -> Vec<PathBuf> {
+        if !self.dirs.is_empty() {
+            return self.dirs.clone();
+        }
+        if self.files.is_empty() && (self.recursive || self.pattern.is_some()) {
+            vec![PathBuf::from(".")]
+        } else {
+            vec![]
+        }
+    }
+
     pub fn is_single_file_mode(&self) -> bool {
-        self.files.len() == 1 && self.dirs.is_empty()
+        self.files.len() == 1 && self.effective_dirs().is_empty()
     }
 }

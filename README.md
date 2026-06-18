@@ -14,12 +14,12 @@ ecd check -d ./src      # [UTF-8] src/main.rs
 
 ## Why ecd?
 
-| | encoding-checker | ecd |
-|---|------------------|-----|
-| Runtime | Node.js | Single native binary |
-| Large directories | Serial, slow | Parallel (`rayon`) |
-| Cross-platform | Depends on `file` / `find` | Pure Rust |
-| Script output | Always `[ENC] path` | Single file → encoding only |
+|                   | encoding-checker           | ecd                         |
+| ----------------- | -------------------------- | --------------------------- |
+| Runtime           | Node.js                    | Single native binary        |
+| Large directories | Serial, slow               | Parallel (`rayon`)          |
+| Cross-platform    | Depends on `file` / `find` | Pure Rust                   |
+| Script output     | Always `[ENC] path`        | Single file → encoding only |
 
 ## Features
 
@@ -68,32 +68,32 @@ ecd check -d . -v
 
 ### Options
 
-| Flag | Description |
-|------|-------------|
-| `-f`, `--file <PATH>` | File to check (repeatable) |
-| `-d`, `--dir <PATH>` | Directory to scan recursively (repeatable) |
+| Flag                     | Description                                    |
+| ------------------------ | ---------------------------------------------- |
+| `-f`, `--file <PATH>`    | File to check (repeatable)                     |
+| `-d`, `--dir <PATH>`     | Directory to scan recursively (repeatable)     |
 | `-p`, `--pattern <GLOB>` | File glob when scanning dirs (default: `**/*`) |
-| `-i`, `--ignore <ENC>` | Skip files with this encoding |
-| `-e`, `--exclude <NAME>` | Extra directory names to exclude |
-| `--no-default-excludes` | Do not skip `.git`, `node_modules`, `target` |
-| `-j`, `--jobs <N>` | Parallel worker threads |
-| `-v`, `--verbose` | Print stats to stderr |
-| `-q`, `--quiet` | Suppress normal output |
-| `-h`, `--help` | Show help |
-| `-V`, `--version` | Show version |
+| `-i`, `--ignore <ENC>`   | Skip files with this encoding                  |
+| `-e`, `--exclude <NAME>` | Extra directory names to exclude               |
+| `--no-default-excludes`  | Do not skip `.git`, `node_modules`, `target`   |
+| `-j`, `--jobs <N>`       | Parallel worker threads                        |
+| `-v`, `--verbose`        | Print stats to stderr                          |
+| `-q`, `--quiet`          | Suppress normal output                         |
+| `-h`, `--help`           | Show help                                      |
+| `-V`, `--version`        | Show version                                   |
 
 ## Supported Encodings
 
 Detection is powered by [charset-normalizer-rs](https://crates.io/crates/charset-normalizer-rs) over the WHATWG / IANA encodings from the Rust `encoding` crate.
 
-| Group | Encodings |
-|-------|-----------|
-| Unicode | `utf-8`, `utf-16le`, `utf-16be` |
+| Group      | Encodings                                                     |
+| ---------- | ------------------------------------------------------------- |
+| Unicode    | `utf-8`, `utf-16le`, `utf-16be`                               |
 | East Asian | `gbk`, `big5`, `shift_jis`, `euc-jp`, `euc-kr`, `iso-2022-jp` |
-| Cyrillic | `koi8-r`, `koi8-u`, `windows-1251`, `x-mac-cyrillic` |
-| ISO 8859 | `iso-8859-2` … `iso-8859-16` (incl. `iso-8859-8-i`) |
-| Windows | `windows-1250` … `windows-1258`, `windows-874` |
-| Other | `ibm866`, `macintosh`, `ascii` |
+| Cyrillic   | `koi8-r`, `koi8-u`, `windows-1251`, `x-mac-cyrillic`          |
+| ISO 8859   | `iso-8859-2` … `iso-8859-16` (incl. `iso-8859-8-i`)           |
+| Windows    | `windows-1250` … `windows-1258`, `windows-874`                |
+| Other      | `ibm866`, `macintosh`, `ascii`                                |
 
 **Normalization notes**
 

@@ -1,3 +1,4 @@
+use std::fs;
 use std::path::{Path, PathBuf};
 
 use anyhow::{Context, Result};
@@ -6,11 +7,12 @@ use globset::{Glob, GlobSetBuilder};
 use crate::cli::CheckArgs;
 
 pub fn collect_paths(args: &CheckArgs) -> Result<Vec<PathBuf>> {
-    if args.files.is_empty() && args.dirs.is_empty() {
+    let dirs = args.effective_dirs();
+    if args.files.is_empty() && dirs.is_empty() {
         anyhow::bail!("no input: provide at least one --file (-f) or --directory (-d)");
     }
 
-    let pattern = build_globset(&args.pattern)?;
+    let pattern = build_globset(&effective_pattern(args.effective_pattern(), args.recursive))?;
     let excludes = args.effective_excludes();
     let mut paths = Vec::new();
 
@@ -24,7 +26,7 @@ pub fn collect_paths(args: &CheckArgs) -> Result<Vec<PathBuf>> {
         }
     }
 
-    for dir in &args.dirs {
+    for dir in &dirs {
         let path = dir.clone();
         if !path.exists() {
             anyhow::bail!("path not found: {}", path.display());
@@ -35,12 +37,29 @@ pub fn collect_paths(args: &CheckArgs) -> Result<Vec<PathBuf>> {
             }
             continue;
         }
-        walk_dir(&path, &pattern, &excludes, &mut paths)?;
+        if args.recursive {
+            walk_dir_recursive(&path, &pattern, &excludes, &mut paths)?;
+        } else {
+            walk_dir_shallow(&path, &pattern, &mut paths)?;
+        }
     }
 
     paths.sort();
     paths.dedup();
     Ok(paths)
+}
+
+/// Expand user patterns for recursive vs shallow directory scans.
+pub fn effective_pattern(pattern: &str, recursive: bool) -> String {
+    if recursive {
+        if pattern.contains('/') || pattern.starts_with("**") {
+            pattern.to_string()
+        } else {
+            format!("**/{pattern}")
+        }
+    } else {
+        pattern.trim_start_matches("**/").to_string()
+    }
 }
 
 fn build_globset(pattern: &str) -> Result<globset::GlobSet> {
@@ -53,7 +72,18 @@ fn matches_pattern(set: &globset::GlobSet, path: &Path) -> bool {
     set.is_match(path) || set.is_match(path.file_name().unwrap_or_default())
 }
 
-fn walk_dir(
+fn walk_dir_shallow(root: &Path, pattern: &globset::GlobSet, out: &mut Vec<PathBuf>) -> Result<()> {
+    for entry in fs::read_dir(root).with_context(|| format!("read dir {}", root.display()))? {
+        let entry = entry?;
+        let path = entry.path();
+        if path.is_file() && matches_pattern(pattern, &path) {
+            out.push(path);
+        }
+    }
+    Ok(())
+}
+
+fn walk_dir_recursive(
     root: &Path,
     pattern: &globset::GlobSet,
     excludes: &[String],
@@ -89,4 +119,24 @@ fn walk_dir(
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn recursive_expands_simple_glob() {
+        assert_eq!(effective_pattern("*.java", true), "**/*.java");
+    }
+
+    #[test]
+    fn recursive_keeps_explicit_glob() {
+        assert_eq!(effective_pattern("**/*.rs", true), "**/*.rs");
+    }
+
+    #[test]
+    fn shallow_strips_recursive_prefix() {
+        assert_eq!(effective_pattern("**/*.java", false), "*.java");
+    }
 }
