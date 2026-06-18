@@ -39,6 +39,9 @@ Detect file encoding(s)
 .TP
 ecd\-encodings(1)
 List valid encoding names
+.TP
+ecd\-convert(1)
+Convert file encoding
 .SH EXTRA
 EXAMPLES:
   ecd check \-f man.txt              Detect encoding of one file
@@ -50,5 +53,6 @@ EXAMPLES:
   ecd check \-d . \-i ascii \-v        Skip ASCII, show stats
   ecd encodings                     List valid encoding names
   ecd encodings \-l                  Same as above
+  ecd convert \-f a.txt \-\-from utf\-8 \-\-to gbk   Convert encoding
 .SH VERSION
 v0.2.1

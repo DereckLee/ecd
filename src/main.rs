@@ -4,8 +4,9 @@ use std::process::ExitCode;
 use clap::{CommandFactory, Parser};
 use rayon::prelude::*;
 
-use ecd::cli::{CheckArgs, Cli, Commands, EncodingsArgs};
+use ecd::cli::{CheckArgs, Cli, Commands, ConvertArgs, EncodingsArgs};
 use ecd::color::ColorWhen;
+use ecd::convert::{ConvertOptions, convert_file};
 use ecd::detect::detect_file;
 use ecd::output::{FileResult, OutputConfig, print_results, print_stats};
 use ecd::walk::collect_paths;
@@ -26,6 +27,7 @@ fn run() -> anyhow::Result<()> {
     match cli.command {
         Some(Commands::Check(args)) => execute_check(args, cli.color),
         Some(Commands::Encodings(args)) => execute_encodings(args),
+        Some(Commands::Convert(args)) => execute_convert(args),
         None => {
             let mut stdout = io::stdout().lock();
             Cli::command().print_help()?;
@@ -41,6 +43,22 @@ fn execute_encodings(_args: EncodingsArgs) -> anyhow::Result<()> {
         writeln!(stdout, "{name}")?;
     }
     Ok(())
+}
+
+fn execute_convert(args: ConvertArgs) -> anyhow::Result<()> {
+    let opts = ConvertOptions {
+        strict: args.strict,
+        write_bom: args.write_bom,
+        force: args.force,
+    };
+    convert_file(
+        &args.file,
+        args.output.as_deref(),
+        &args.from_encoding,
+        &args.to_encoding,
+        &opts,
+    )
+    .map_err(|e| anyhow::anyhow!("{e}"))
 }
 
 fn execute_check(args: CheckArgs, color: ColorWhen) -> anyhow::Result<()> {

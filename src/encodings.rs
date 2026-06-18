@@ -1,5 +1,9 @@
 //! Supported and planned character encodings for detection.
 
+use std::fmt;
+
+use encoding_rs::Encoding;
+
 /// Encodings currently detectable via charset-normalizer-rs (WHATWG / IANA).
 pub const SUPPORTED: &[&str] = &[
     // Unicode
@@ -120,6 +124,32 @@ pub fn is_supported(name: &str) -> bool {
     SUPPORTED.iter().any(|enc| *enc == normalized)
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum EncodingError {
+    Unsupported(String),
+    Unresolvable(String),
+}
+
+impl fmt::Display for EncodingError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Unsupported(name) => write!(f, "unsupported encoding: {name}"),
+            Self::Unresolvable(name) => write!(f, "unresolvable encoding: {name}"),
+        }
+    }
+}
+
+impl std::error::Error for EncodingError {}
+
+/// Resolve a supported canonical encoding name to an `encoding_rs` codec.
+pub fn lookup_encoding(name: &str) -> Result<&'static Encoding, EncodingError> {
+    let normalized = name.to_ascii_lowercase();
+    if !is_supported(&normalized) {
+        return Err(EncodingError::Unsupported(normalized));
+    }
+    Encoding::for_label(normalized.as_bytes()).ok_or(EncodingError::Unresolvable(normalized))
+}
+
 /// All valid encoding names (supported + planned), sorted and unique.
 pub fn all_names() -> Vec<&'static str> {
     let mut names: Vec<_> = SUPPORTED.iter().chain(PLANNED.iter()).copied().collect();
@@ -155,6 +185,21 @@ mod tests {
                 "planned encoding {enc} is already supported"
             );
         }
+    }
+
+    #[test]
+    fn all_supported_labels_resolve() {
+        for enc in SUPPORTED {
+            lookup_encoding(enc).unwrap_or_else(|err| panic!("{enc}: {err}"));
+        }
+    }
+
+    #[test]
+    fn lookup_rejects_planned() {
+        assert!(matches!(
+            lookup_encoding("tis-620"),
+            Err(EncodingError::Unsupported(_))
+        ));
     }
 
     #[test]

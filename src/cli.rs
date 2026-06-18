@@ -17,6 +17,7 @@ EXAMPLES:
   ecd check -d . -i ascii -v        Skip ASCII, show stats
   ecd encodings                     List valid encoding names
   ecd encodings -l                  Same as above
+  ecd convert -f a.txt --from utf-8 --to gbk   Convert encoding
 ";
 
 #[derive(Parser, Debug)]
@@ -49,6 +50,39 @@ pub enum Commands {
     Check(CheckArgs),
     /// List valid encoding names
     Encodings(EncodingsArgs),
+    /// Convert file encoding
+    Convert(ConvertArgs),
+}
+
+#[derive(Args, Debug)]
+pub struct ConvertArgs {
+    /// File to convert
+    #[arg(short = 'f', long = "file", value_name = "PATH")]
+    pub file: PathBuf,
+
+    /// Source encoding
+    #[arg(long = "from", value_name = "ENC")]
+    pub from_encoding: String,
+
+    /// Target encoding
+    #[arg(long = "to", value_name = "ENC")]
+    pub to_encoding: String,
+
+    /// Output file (stdout when omitted)
+    #[arg(short = 'o', long = "output", value_name = "PATH")]
+    pub output: Option<PathBuf>,
+
+    /// Fail on decode/encode errors (no replacement characters)
+    #[arg(long = "strict")]
+    pub strict: bool,
+
+    /// Write BOM for UTF-8 / UTF-16 output
+    #[arg(long = "bom")]
+    pub write_bom: bool,
+
+    /// Overwrite existing output file
+    #[arg(long = "force")]
+    pub force: bool,
 }
 
 #[derive(Args, Debug)]

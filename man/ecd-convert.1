@@ -1,0 +1,49 @@
+.ie \n(.g .ds Aq \(aq
+.el .ds Aq '
+.TH ecd-convert 1  "convert " 
+.SH NAME
+ecd\-convert \- Convert file encoding
+.SH SYNOPSIS
+\fBecd convert\fR [\fB\-\-color\fR] <\fB\-f\fR|\fB\-\-file\fR> <\fB\-\-from\fR> <\fB\-\-to\fR> [\fB\-o\fR|\fB\-\-output\fR] [\fB\-\-strict\fR] [\fB\-\-bom\fR] [\fB\-\-force\fR] [\fB\-h\fR|\fB\-\-help\fR] 
+.SH DESCRIPTION
+Convert file encoding
+.SH OPTIONS
+.TP
+\fB\-\-color\fR \fI<WHEN>\fR [default: never]
+When to colorize encoding labels (`[UTF\-8]`, `[SKIP]`, …) in batch output
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+auto: Colorize when stdout is a terminal and `NO_COLOR` is unset
+.IP \(bu 2
+never: Never colorize (default)
+.IP \(bu 2
+always: Always colorize (ANSI escapes; useful for piping to `less \-R`)
+.RE
+.TP
+\fB\-f\fR, \fB\-\-file\fR \fI<PATH>\fR
+File to convert
+.TP
+\fB\-\-from\fR \fI<ENC>\fR
+Source encoding
+.TP
+\fB\-\-to\fR \fI<ENC>\fR
+Target encoding
+.TP
+\fB\-o\fR, \fB\-\-output\fR \fI<PATH>\fR
+Output file (stdout when omitted)
+.TP
+\fB\-\-strict\fR
+Fail on decode/encode errors (no replacement characters)
+.TP
+\fB\-\-bom\fR
+Write BOM for UTF\-8 / UTF\-16 output
+.TP
+\fB\-\-force\fR
+Overwrite existing output file
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Print help (see a summary with \*(Aq\-h\*(Aq)

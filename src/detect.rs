@@ -71,6 +71,11 @@ pub fn normalize_encoding_name(name: &str) -> String {
     }
 }
 
+/// Returns true when content looks like binary (not UTF-16 text).
+pub fn is_binary_content(data: &[u8]) -> bool {
+    looks_binary(data)
+}
+
 fn looks_binary(data: &[u8]) -> bool {
     if data.contains(&0) {
         // UTF-16 text often contains NUL bytes in alternating positions.

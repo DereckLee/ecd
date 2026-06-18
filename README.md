@@ -26,6 +26,7 @@ ecd check -d ./src      # [UTF-8] src/main.rs
 - **Recursive directory scan** with glob filters and `.gitignore` support
 - **BOM fast-path** for UTF-8 / UTF-16
 - **Parallel detection** with configurable worker threads
+- **Encoding conversion** between any two supported encodings (`ecd convert`)
 
 ## Install
 
@@ -70,6 +71,10 @@ ecd encodings
 # big5
 # ...
 # utf-8
+
+# Convert between supported encodings (stdout when -o is omitted)
+ecd convert -f man.txt --from utf-8 --to gbk
+ecd convert -f man.txt --from gbk --to utf-8 -o man.utf8.txt
 ```
 
 ### Options
@@ -109,7 +114,7 @@ Detection is powered by [charset-normalizer-rs](https://crates.io/crates/charset
 
 **Planned** (not yet supported): `tis-620`, `cp437`, `cp850`, `cp932`, `gb2312`, `hz-gb-2312`, `utf-32le`, `utf-32be`, `utf-7`
 
-The canonical list lives in [`src/encodings.rs`](src/encodings.rs). Run `ecd encodings` to print all valid names (supported + planned).
+The canonical list lives in [`src/encodings.rs`](src/encodings.rs). Run `ecd encodings` to print all valid names (supported + planned). **`ecd convert` accepts only the 38 supported encodings** (not planned).
 
 ## Man Page
 
