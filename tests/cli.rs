@@ -227,3 +227,56 @@ fn missing_file_errors() {
         .failure()
         .stderr(predicate::str::contains("path not found"));
 }
+
+#[test]
+fn encodings_help_prints() {
+    bin()
+        .args(["encodings", "--help"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("--list"));
+}
+
+#[test]
+fn encodings_lists_all_names() {
+    let output = bin()
+        .arg("encodings")
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+    let text = String::from_utf8_lossy(&output);
+    let lines: Vec<_> = text.lines().collect();
+    assert_eq!(lines.len(), 47);
+    assert!(lines.contains(&"gbk"));
+    assert!(lines.contains(&"tis-620"));
+    assert!(!lines.contains(&"gb18030"));
+}
+
+#[test]
+fn encodings_list_flag_same_output() {
+    let default_out = bin()
+        .arg("encodings")
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+    let list_out = bin()
+        .args(["encodings", "-l"])
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+    let long_out = bin()
+        .args(["encodings", "--list"])
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+    assert_eq!(default_out, list_out);
+    assert_eq!(default_out, long_out);
+}

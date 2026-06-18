@@ -120,6 +120,14 @@ pub fn is_supported(name: &str) -> bool {
     SUPPORTED.iter().any(|enc| *enc == normalized)
 }
 
+/// All valid encoding names (supported + planned), sorted and unique.
+pub fn all_names() -> Vec<&'static str> {
+    let mut names: Vec<_> = SUPPORTED.iter().chain(PLANNED.iter()).copied().collect();
+    names.sort_unstable();
+    names.dedup();
+    names
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -146,6 +154,18 @@ mod tests {
                 !is_supported(enc),
                 "planned encoding {enc} is already supported"
             );
+        }
+    }
+
+    #[test]
+    fn all_names_includes_supported_and_planned() {
+        let names = all_names();
+        assert_eq!(names.len(), SUPPORTED.len() + PLANNED.len());
+        for enc in SUPPORTED {
+            assert!(names.contains(enc), "missing supported encoding {enc}");
+        }
+        for enc in PLANNED {
+            assert!(names.contains(enc), "missing planned encoding {enc}");
         }
     }
 }

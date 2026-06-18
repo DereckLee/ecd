@@ -15,6 +15,8 @@ EXAMPLES:
   ecd check -d . -p \"*.rs\"          Filter by glob pattern
   ecd check -f a.txt -f b.txt       Multiple files
   ecd check -d . -i ascii -v        Skip ASCII, show stats
+  ecd encodings                     List valid encoding names
+  ecd encodings -l                  Same as above
 ";
 
 #[derive(Parser, Debug)]
@@ -45,6 +47,15 @@ pub struct Cli {
 pub enum Commands {
     /// Detect file encoding(s)
     Check(CheckArgs),
+    /// List valid encoding names
+    Encodings(EncodingsArgs),
+}
+
+#[derive(Args, Debug)]
+pub struct EncodingsArgs {
+    /// List valid encoding names (default action)
+    #[arg(short = 'l', long = "list")]
+    pub list: bool,
 }
 
 #[derive(Args, Debug, Clone)]

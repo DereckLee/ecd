@@ -1,0 +1,31 @@
+.ie \n(.g .ds Aq \(aq
+.el .ds Aq '
+.TH ecd-encodings 1  "encodings " 
+.SH NAME
+ecd\-encodings \- List valid encoding names
+.SH SYNOPSIS
+\fBecd encodings\fR [\fB\-\-color\fR] [\fB\-l\fR|\fB\-\-list\fR] [\fB\-h\fR|\fB\-\-help\fR] 
+.SH DESCRIPTION
+List valid encoding names
+.SH OPTIONS
+.TP
+\fB\-\-color\fR \fI<WHEN>\fR [default: never]
+When to colorize encoding labels (`[UTF\-8]`, `[SKIP]`, …) in batch output
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+auto: Colorize when stdout is a terminal and `NO_COLOR` is unset
+.IP \(bu 2
+never: Never colorize (default)
+.IP \(bu 2
+always: Always colorize (ANSI escapes; useful for piping to `less \-R`)
+.RE
+.TP
+\fB\-l\fR, \fB\-\-list\fR
+List valid encoding names (default action)
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Print help (see a summary with \*(Aq\-h\*(Aq)

@@ -36,6 +36,9 @@ Print version
 .TP
 ecd\-check(1)
 Detect file encoding(s)
+.TP
+ecd\-encodings(1)
+List valid encoding names
 .SH EXTRA
 EXAMPLES:
   ecd check \-f man.txt              Detect encoding of one file
@@ -45,5 +48,7 @@ EXAMPLES:
   ecd check \-d . \-p "*.rs"          Filter by glob pattern
   ecd check \-f a.txt \-f b.txt       Multiple files
   ecd check \-d . \-i ascii \-v        Skip ASCII, show stats
+  ecd encodings                     List valid encoding names
+  ecd encodings \-l                  Same as above
 .SH VERSION
 v0.2.1

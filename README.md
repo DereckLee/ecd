@@ -63,6 +63,13 @@ ecd check -d . -i ascii
 
 # Stats on stderr
 ecd check -d . -v
+
+# List valid encoding names (one per line)
+ecd encodings
+# ascii
+# big5
+# ...
+# utf-8
 ```
 
 ### Options
@@ -102,7 +109,7 @@ Detection is powered by [charset-normalizer-rs](https://crates.io/crates/charset
 
 **Planned** (not yet supported): `tis-620`, `cp437`, `cp850`, `cp932`, `gb2312`, `hz-gb-2312`, `utf-32le`, `utf-32be`, `utf-7`
 
-The canonical list lives in [`src/encodings.rs`](src/encodings.rs).
+The canonical list lives in [`src/encodings.rs`](src/encodings.rs). Run `ecd encodings` to print all valid names (supported + planned).
 
 ## Man Page
 
