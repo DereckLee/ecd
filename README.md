@@ -1,7 +1,7 @@
 # ecd
 
 [![crates.io](https://img.shields.io/crates/v/ecd.svg)](https://crates.io/crates/ecd)
-[![license](https://img.shields.io/crates/l/ecd.svg)](https://github.com/dereck/ecd/blob/main/LICENSE)
+[![license](https://img.shields.io/crates/l/ecd.svg)](https://github.com/DereckLee/ecd/blob/main/LICENSE)
 
 **ecd** is a fast, cross-platform command-line tool for detecting the character encoding of text files.
 
@@ -38,7 +38,7 @@ cargo install ecd
 From source:
 
 ```bash
-git clone https://github.com/dereck/ecd
+git clone https://github.com/DereckLee/ecd
 cd ecd
 cargo install --path .
 ```

@@ -15,11 +15,12 @@ fn fixture(name: &str) -> PathBuf {
 
 #[test]
 fn version_prints() {
+    let version = env!("CARGO_PKG_VERSION");
     bin()
         .arg("--version")
         .assert()
         .success()
-        .stdout(predicate::str::contains("0.1.0"));
+        .stdout(predicate::str::contains(version));
 }
 
 #[test]
