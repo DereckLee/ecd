@@ -1,0 +1,40 @@
+.ie \n(.g .ds Aq \(aq
+.el .ds Aq '
+.TH ecd-check 1  "check " 
+.SH NAME
+ecd\-check \- Detect file encoding(s)
+.SH SYNOPSIS
+\fBecd check\fR [\fB\-f\fR|\fB\-\-file\fR] [\fB\-d\fR|\fB\-\-dir\fR] [\fB\-p\fR|\fB\-\-pattern\fR] [\fB\-i\fR|\fB\-\-ignore\fR] [\fB\-e\fR|\fB\-\-exclude\fR] [\fB\-\-no\-default\-excludes\fR] [\fB\-j\fR|\fB\-\-jobs\fR] [\fB\-v\fR|\fB\-\-verbose\fR] [\fB\-q\fR|\fB\-\-quiet\fR] [\fB\-h\fR|\fB\-\-help\fR] 
+.SH DESCRIPTION
+Detect file encoding(s)
+.SH OPTIONS
+.TP
+\fB\-f\fR, \fB\-\-file\fR \fI<PATH>\fR
+File(s) to check (repeatable)
+.TP
+\fB\-d\fR, \fB\-\-dir\fR \fI<PATH>\fR
+Directory/directories to scan recursively (repeatable)
+.TP
+\fB\-p\fR, \fB\-\-pattern\fR \fI<PATTERN>\fR [default: **/*]
+Glob pattern to filter files when scanning directories
+.TP
+\fB\-i\fR, \fB\-\-ignore\fR \fI<ENC>\fR
+Ignore files with this encoding (case\-insensitive)
+.TP
+\fB\-e\fR, \fB\-\-exclude\fR \fI<NAME>\fR
+Additional directory names to exclude
+.TP
+\fB\-\-no\-default\-excludes\fR
+Disable default directory excludes (.git, node_modules, target)
+.TP
+\fB\-j\fR, \fB\-\-jobs\fR \fI<N>\fR
+Number of parallel jobs
+.TP
+\fB\-v\fR, \fB\-\-verbose\fR
+Print statistics to stderr
+.TP
+\fB\-q\fR, \fB\-\-quiet\fR
+Suppress normal output (errors only)
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Print help
