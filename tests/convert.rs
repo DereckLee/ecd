@@ -85,7 +85,8 @@ fn convert_rejects_planned_encoding() {
         ])
         .assert()
         .failure()
-        .stderr(predicate::str::contains("unsupported encoding"));
+        .stderr(predicate::str::contains("invalid value"))
+        .stderr(predicate::str::contains("tis-620"));
 }
 
 #[test]

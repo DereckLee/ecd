@@ -116,6 +116,41 @@ Detection is powered by [charset-normalizer-rs](https://crates.io/crates/charset
 
 The canonical list lives in [`src/encodings.rs`](src/encodings.rs). Run `ecd encodings` to print all valid names (supported + planned). **`ecd convert` accepts only the 38 supported encodings** (not planned).
 
+## Shell completion
+
+Tab completion for **bash**, **zsh**, and **fish** is available via static scripts in [`completions/`](completions/) or generated from your installed binary.
+
+### Option A — static scripts (from a clone)
+
+```bash
+# Bash
+mkdir -p ~/.local/share/bash-completion/completions
+cp completions/ecd.bash ~/.local/share/bash-completion/completions/ecd
+
+# Zsh
+mkdir -p ~/.zfunc
+cp completions/_ecd ~/.zfunc/_ecd
+# Add to ~/.zshrc:
+#   fpath=(~/.zfunc $fpath)
+#   autoload -Uz compinit && compinit
+
+# Fish
+mkdir -p ~/.config/fish/completions
+cp completions/ecd.fish ~/.config/fish/completions/ecd.fish
+```
+
+Restart your shell or start a new session, then try `ecd <TAB>`.
+
+### Option B — from installed `ecd` (matches your binary version)
+
+```bash
+ecd complete bash > ~/.local/share/bash-completion/completions/ecd
+ecd complete zsh  > ~/.zfunc/_ecd
+ecd complete fish > ~/.config/fish/completions/ecd.fish
+```
+
+Completions cover subcommands (`check`, `encodings`, `convert`), flags, supported encoding names (`--from`, `--to`, `-i`), and file/directory paths.
+
 ## Man Page
 
 ```bash
@@ -132,13 +167,17 @@ sudo cp man/ecd.1 /usr/local/share/man/man1/
 ## Development
 
 ```bash
-make help      # list targets
-make test      # run tests
-make check     # fmt + clippy
-make build     # release build
-make man       # regenerate man page
-make fixtures  # regenerate per-encoding test fixtures
+make help         # list targets
+make test         # run tests
+make check        # fmt + clippy
+make build        # release build
+make gen          # regenerate man pages and shell completions
+make man          # regenerate man pages only
+make completions  # regenerate shell completions only
+make fixtures     # regenerate per-encoding test fixtures
 ```
+
+After adding or changing subcommands or flags, run `make gen` and commit updates under `man/` and `completions/`.
 
 Every supported encoding has a fixture under `tests/fixtures/encodings/` and a test in `tests/encodings.rs`.
 

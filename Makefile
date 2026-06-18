@@ -6,7 +6,7 @@ CARGO ?= cargo
 
 .DEFAULT_GOAL := help
 
-.PHONY: help build test check man install publish-dry-run clean fixtures
+.PHONY: help build test check man completions gen install publish-dry-run clean fixtures
 
 help: ## Show all available targets
 	@echo "Usage: make <target>"
@@ -26,6 +26,11 @@ check: ## Check formatting and run clippy with warnings denied
 
 man: ## Generate man pages into man/ via cargo xtask
 	$(CARGO) xtask man
+
+completions: ## Generate shell completions into completions/ via cargo xtask
+	$(CARGO) xtask completions
+
+gen: man completions ## Regenerate man pages and shell completions
 
 install: ## Install ecd binary to ~/.cargo/bin
 	$(CARGO) install --path . --force

@@ -12,7 +12,7 @@ homepage = "https://github.com/DereckLee/ecd"
 documentation = "https://docs.rs/ecd"
 keywords = ["encoding", "charset", "cli", "detector", "utf-8"]
 categories = ["command-line-utilities", "encoding"]
-include = ["src/**/*", "Cargo.toml", "README.md", "LICENSE", "man/*.1"]
+include = ["src/**/*", "Cargo.toml", "README.md", "LICENSE", "man/*.1", "completions/*"]
 
 [workspace]
 members = [".", "xtask"]
@@ -29,6 +29,7 @@ path = "src/main.rs"
 anyhow = "1"
 charset-normalizer-rs = "1"
 clap = { version = "4", features = ["derive", "env"] }
+clap_complete = "4"
 encoding_rs = "0.8"
 globset = "0.4"
 ignore = "0.4"

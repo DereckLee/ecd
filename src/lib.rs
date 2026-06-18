@@ -4,6 +4,7 @@
 
 pub mod cli;
 pub mod color;
+pub mod completions;
 pub mod convert;
 pub mod detect;
 pub mod encodings;

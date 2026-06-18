@@ -1,0 +1,214 @@
+#compdef ecd
+
+autoload -U is-at-least
+
+_ecd() {
+    typeset -A opt_args
+    typeset -a _arguments_options
+    local ret=1
+
+    if is-at-least 5.2; then
+        _arguments_options=(-s -S -C)
+    else
+        _arguments_options=(-s -C)
+    fi
+
+    local context curcontext="$curcontext" state line
+    _arguments "${_arguments_options[@]}" : \
+'--color=[When to colorize encoding labels (\`\[UTF-8\]\`, \`\[SKIP\]\`, …) in batch output]:WHEN:((auto\:"Colorize when stdout is a terminal and \`NO_COLOR\` is unset"
+never\:"Never colorize (default)"
+always\:"Always colorize (ANSI escapes; useful for piping to \`less -R\`)"))' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'-V[Print version]' \
+'--version[Print version]' \
+":: :_ecd_commands" \
+"*::: :->ecd" \
+&& ret=0
+    case $state in
+    (ecd)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:ecd-command-$line[1]:"
+        case $line[1] in
+            (check)
+_arguments "${_arguments_options[@]}" : \
+'*-f+[File(s) to check (repeatable)]:PATH:_files' \
+'*--file=[File(s) to check (repeatable)]:PATH:_files' \
+'*-d+[Directory/directories to scan (repeatable); defaults to \`.\` when \`-r\` or \`-p\` is given alone]:PATH:_files -/' \
+'*--dir=[Directory/directories to scan (repeatable); defaults to \`.\` when \`-r\` or \`-p\` is given alone]:PATH:_files -/' \
+'-p+[Glob pattern to filter files (\`*.java\`; with \`-r\` matches at any depth)]:GLOB:_default' \
+'--pattern=[Glob pattern to filter files (\`*.java\`; with \`-r\` matches at any depth)]:GLOB:_default' \
+'-i+[Ignore files with this encoding (case-insensitive)]:ENC:(utf-8 utf-16le utf-16be gbk big5 shift_jis euc-jp euc-kr iso-2022-jp koi8-r koi8-u windows-1251 x-mac-cyrillic iso-8859-2 iso-8859-3 iso-8859-4 iso-8859-5 iso-8859-6 iso-8859-7 iso-8859-8 iso-8859-8-i iso-8859-10 iso-8859-13 iso-8859-14 iso-8859-15 iso-8859-16 windows-1250 windows-1252 windows-1253 windows-1254 windows-1255 windows-1256 windows-1257 windows-1258 ibm866 windows-874 macintosh ascii)' \
+'--ignore=[Ignore files with this encoding (case-insensitive)]:ENC:(utf-8 utf-16le utf-16be gbk big5 shift_jis euc-jp euc-kr iso-2022-jp koi8-r koi8-u windows-1251 x-mac-cyrillic iso-8859-2 iso-8859-3 iso-8859-4 iso-8859-5 iso-8859-6 iso-8859-7 iso-8859-8 iso-8859-8-i iso-8859-10 iso-8859-13 iso-8859-14 iso-8859-15 iso-8859-16 windows-1250 windows-1252 windows-1253 windows-1254 windows-1255 windows-1256 windows-1257 windows-1258 ibm866 windows-874 macintosh ascii)' \
+'*-e+[Additional directory names to exclude]:NAME:_default' \
+'*--exclude=[Additional directory names to exclude]:NAME:_default' \
+'-j+[Number of parallel jobs]:N:_default' \
+'--jobs=[Number of parallel jobs]:N:_default' \
+'--color=[When to colorize encoding labels (\`\[UTF-8\]\`, \`\[SKIP\]\`, …) in batch output]:WHEN:((auto\:"Colorize when stdout is a terminal and \`NO_COLOR\` is unset"
+never\:"Never colorize (default)"
+always\:"Always colorize (ANSI escapes; useful for piping to \`less -R\`)"))' \
+'-r[Recursively scan into subdirectories (used with \`-d\`, or current directory when \`-d\` is omitted)]' \
+'--recursive[Recursively scan into subdirectories (used with \`-d\`, or current directory when \`-d\` is omitted)]' \
+'--no-default-excludes[Disable default directory excludes (.git, node_modules, target)]' \
+'-v[Print statistics to stderr]' \
+'--verbose[Print statistics to stderr]' \
+'-q[Suppress normal output (errors only)]' \
+'--quiet[Suppress normal output (errors only)]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(encodings)
+_arguments "${_arguments_options[@]}" : \
+'--color=[When to colorize encoding labels (\`\[UTF-8\]\`, \`\[SKIP\]\`, …) in batch output]:WHEN:((auto\:"Colorize when stdout is a terminal and \`NO_COLOR\` is unset"
+never\:"Never colorize (default)"
+always\:"Always colorize (ANSI escapes; useful for piping to \`less -R\`)"))' \
+'-l[List valid encoding names (default action)]' \
+'--list[List valid encoding names (default action)]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(convert)
+_arguments "${_arguments_options[@]}" : \
+'-f+[File to convert]:PATH:_files' \
+'--file=[File to convert]:PATH:_files' \
+'--from=[Source encoding]:ENC:(utf-8 utf-16le utf-16be gbk big5 shift_jis euc-jp euc-kr iso-2022-jp koi8-r koi8-u windows-1251 x-mac-cyrillic iso-8859-2 iso-8859-3 iso-8859-4 iso-8859-5 iso-8859-6 iso-8859-7 iso-8859-8 iso-8859-8-i iso-8859-10 iso-8859-13 iso-8859-14 iso-8859-15 iso-8859-16 windows-1250 windows-1252 windows-1253 windows-1254 windows-1255 windows-1256 windows-1257 windows-1258 ibm866 windows-874 macintosh ascii)' \
+'--to=[Target encoding]:ENC:(utf-8 utf-16le utf-16be gbk big5 shift_jis euc-jp euc-kr iso-2022-jp koi8-r koi8-u windows-1251 x-mac-cyrillic iso-8859-2 iso-8859-3 iso-8859-4 iso-8859-5 iso-8859-6 iso-8859-7 iso-8859-8 iso-8859-8-i iso-8859-10 iso-8859-13 iso-8859-14 iso-8859-15 iso-8859-16 windows-1250 windows-1252 windows-1253 windows-1254 windows-1255 windows-1256 windows-1257 windows-1258 ibm866 windows-874 macintosh ascii)' \
+'-o+[Output file (stdout when omitted)]:PATH:_files' \
+'--output=[Output file (stdout when omitted)]:PATH:_files' \
+'--color=[When to colorize encoding labels (\`\[UTF-8\]\`, \`\[SKIP\]\`, …) in batch output]:WHEN:((auto\:"Colorize when stdout is a terminal and \`NO_COLOR\` is unset"
+never\:"Never colorize (default)"
+always\:"Always colorize (ANSI escapes; useful for piping to \`less -R\`)"))' \
+'--strict[Fail on decode/encode errors (no replacement characters)]' \
+'--bom[Write BOM for UTF-8 / UTF-16 output]' \
+'--force[Overwrite existing output file]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(complete)
+_arguments "${_arguments_options[@]}" : \
+'--color=[When to colorize encoding labels (\`\[UTF-8\]\`, \`\[SKIP\]\`, …) in batch output]:WHEN:((auto\:"Colorize when stdout is a terminal and \`NO_COLOR\` is unset"
+never\:"Never colorize (default)"
+always\:"Always colorize (ANSI escapes; useful for piping to \`less -R\`)"))' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':shell -- Target shell (bash, zsh, fish, …):(bash elvish fish powershell zsh)' \
+&& ret=0
+;;
+(help)
+_arguments "${_arguments_options[@]}" : \
+":: :_ecd__subcmd__help_commands" \
+"*::: :->help" \
+&& ret=0
+
+    case $state in
+    (help)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:ecd-help-command-$line[1]:"
+        case $line[1] in
+            (check)
+_arguments "${_arguments_options[@]}" : \
+&& ret=0
+;;
+(encodings)
+_arguments "${_arguments_options[@]}" : \
+&& ret=0
+;;
+(convert)
+_arguments "${_arguments_options[@]}" : \
+&& ret=0
+;;
+(complete)
+_arguments "${_arguments_options[@]}" : \
+&& ret=0
+;;
+(help)
+_arguments "${_arguments_options[@]}" : \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+        esac
+    ;;
+esac
+}
+
+(( $+functions[_ecd_commands] )) ||
+_ecd_commands() {
+    local commands; commands=(
+'check:Detect file encoding(s)' \
+'encodings:List valid encoding names' \
+'convert:Convert file encoding' \
+'complete:Generate shell completions to stdout' \
+'help:Print this message or the help of the given subcommand(s)' \
+    )
+    _describe -t commands 'ecd commands' commands "$@"
+}
+(( $+functions[_ecd__subcmd__check_commands] )) ||
+_ecd__subcmd__check_commands() {
+    local commands; commands=()
+    _describe -t commands 'ecd check commands' commands "$@"
+}
+(( $+functions[_ecd__subcmd__complete_commands] )) ||
+_ecd__subcmd__complete_commands() {
+    local commands; commands=()
+    _describe -t commands 'ecd complete commands' commands "$@"
+}
+(( $+functions[_ecd__subcmd__convert_commands] )) ||
+_ecd__subcmd__convert_commands() {
+    local commands; commands=()
+    _describe -t commands 'ecd convert commands' commands "$@"
+}
+(( $+functions[_ecd__subcmd__encodings_commands] )) ||
+_ecd__subcmd__encodings_commands() {
+    local commands; commands=()
+    _describe -t commands 'ecd encodings commands' commands "$@"
+}
+(( $+functions[_ecd__subcmd__help_commands] )) ||
+_ecd__subcmd__help_commands() {
+    local commands; commands=(
+'check:Detect file encoding(s)' \
+'encodings:List valid encoding names' \
+'convert:Convert file encoding' \
+'complete:Generate shell completions to stdout' \
+'help:Print this message or the help of the given subcommand(s)' \
+    )
+    _describe -t commands 'ecd help commands' commands "$@"
+}
+(( $+functions[_ecd__subcmd__help__subcmd__check_commands] )) ||
+_ecd__subcmd__help__subcmd__check_commands() {
+    local commands; commands=()
+    _describe -t commands 'ecd help check commands' commands "$@"
+}
+(( $+functions[_ecd__subcmd__help__subcmd__complete_commands] )) ||
+_ecd__subcmd__help__subcmd__complete_commands() {
+    local commands; commands=()
+    _describe -t commands 'ecd help complete commands' commands "$@"
+}
+(( $+functions[_ecd__subcmd__help__subcmd__convert_commands] )) ||
+_ecd__subcmd__help__subcmd__convert_commands() {
+    local commands; commands=()
+    _describe -t commands 'ecd help convert commands' commands "$@"
+}
+(( $+functions[_ecd__subcmd__help__subcmd__encodings_commands] )) ||
+_ecd__subcmd__help__subcmd__encodings_commands() {
+    local commands; commands=()
+    _describe -t commands 'ecd help encodings commands' commands "$@"
+}
+(( $+functions[_ecd__subcmd__help__subcmd__help_commands] )) ||
+_ecd__subcmd__help__subcmd__help_commands() {
+    local commands; commands=()
+    _describe -t commands 'ecd help help commands' commands "$@"
+}
+
+if [ "$funcstack[1]" = "_ecd" ]; then
+    _ecd "$@"
+else
+    compdef _ecd ecd
+fi

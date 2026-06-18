@@ -4,7 +4,7 @@ use std::process::ExitCode;
 use clap::{CommandFactory, Parser};
 use rayon::prelude::*;
 
-use ecd::cli::{CheckArgs, Cli, Commands, ConvertArgs, EncodingsArgs};
+use ecd::cli::{CheckArgs, Cli, Commands, CompleteArgs, ConvertArgs, EncodingsArgs};
 use ecd::color::ColorWhen;
 use ecd::convert::{ConvertOptions, convert_file};
 use ecd::detect::detect_file;
@@ -28,6 +28,7 @@ fn run() -> anyhow::Result<()> {
         Some(Commands::Check(args)) => execute_check(args, cli.color),
         Some(Commands::Encodings(args)) => execute_encodings(args),
         Some(Commands::Convert(args)) => execute_convert(args),
+        Some(Commands::Complete(args)) => execute_complete(args),
         None => {
             let mut stdout = io::stdout().lock();
             Cli::command().print_help()?;
@@ -42,6 +43,12 @@ fn execute_encodings(_args: EncodingsArgs) -> anyhow::Result<()> {
     for name in ecd::encodings::all_names() {
         writeln!(stdout, "{name}")?;
     }
+    Ok(())
+}
+
+fn execute_complete(args: CompleteArgs) -> anyhow::Result<()> {
+    let mut stdout = io::stdout().lock();
+    ecd::completions::write_completions(args.shell, &mut stdout);
     Ok(())
 }
 

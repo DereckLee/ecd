@@ -2,6 +2,7 @@
 
 use std::fmt;
 
+use clap::builder::PossibleValuesParser;
 use encoding_rs::Encoding;
 
 /// Encodings currently detectable via charset-normalizer-rs (WHATWG / IANA).
@@ -122,6 +123,11 @@ pub const GROUPS: &[(&str, &[&str])] = &[
 pub fn is_supported(name: &str) -> bool {
     let normalized = name.to_ascii_lowercase();
     SUPPORTED.iter().any(|enc| *enc == normalized)
+}
+
+/// Clap value parser and shell completion source for supported encoding names.
+pub fn supported_encoding_parser() -> PossibleValuesParser {
+    PossibleValuesParser::new(SUPPORTED)
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

@@ -1,8 +1,9 @@
 use std::path::PathBuf;
 
-use clap::{Args, Parser, Subcommand};
+use clap::{Args, Parser, Subcommand, ValueHint};
 
 use crate::color::ColorWhen;
+use crate::encodings;
 
 pub const DEFAULT_EXCLUDES: &[&str] = &[".git", "node_modules", "target"];
 
@@ -52,24 +53,46 @@ pub enum Commands {
     Encodings(EncodingsArgs),
     /// Convert file encoding
     Convert(ConvertArgs),
+    /// Generate shell completions to stdout
+    #[command(hide = true)]
+    Complete(CompleteArgs),
+}
+
+#[derive(Args, Debug)]
+pub struct CompleteArgs {
+    /// Target shell (bash, zsh, fish, …)
+    pub shell: clap_complete::Shell,
 }
 
 #[derive(Args, Debug)]
 pub struct ConvertArgs {
     /// File to convert
-    #[arg(short = 'f', long = "file", value_name = "PATH")]
+    #[arg(short = 'f', long = "file", value_name = "PATH", value_hint = ValueHint::FilePath)]
     pub file: PathBuf,
 
     /// Source encoding
-    #[arg(long = "from", value_name = "ENC")]
+    #[arg(
+        long = "from",
+        value_name = "ENC",
+        value_parser = encodings::supported_encoding_parser()
+    )]
     pub from_encoding: String,
 
     /// Target encoding
-    #[arg(long = "to", value_name = "ENC")]
+    #[arg(
+        long = "to",
+        value_name = "ENC",
+        value_parser = encodings::supported_encoding_parser()
+    )]
     pub to_encoding: String,
 
     /// Output file (stdout when omitted)
-    #[arg(short = 'o', long = "output", value_name = "PATH")]
+    #[arg(
+        short = 'o',
+        long = "output",
+        value_name = "PATH",
+        value_hint = ValueHint::FilePath
+    )]
     pub output: Option<PathBuf>,
 
     /// Fail on decode/encode errors (no replacement characters)
@@ -95,11 +118,21 @@ pub struct EncodingsArgs {
 #[derive(Args, Debug, Clone)]
 pub struct CheckArgs {
     /// File(s) to check (repeatable)
-    #[arg(short = 'f', long = "file", value_name = "PATH")]
+    #[arg(
+        short = 'f',
+        long = "file",
+        value_name = "PATH",
+        value_hint = ValueHint::FilePath
+    )]
     pub files: Vec<PathBuf>,
 
     /// Directory/directories to scan (repeatable); defaults to `.` when `-r` or `-p` is given alone
-    #[arg(short = 'd', long = "dir", value_name = "PATH")]
+    #[arg(
+        short = 'd',
+        long = "dir",
+        value_name = "PATH",
+        value_hint = ValueHint::DirPath
+    )]
     pub dirs: Vec<PathBuf>,
 
     /// Recursively scan into subdirectories (used with `-d`, or current directory when `-d` is omitted)
@@ -111,7 +144,12 @@ pub struct CheckArgs {
     pub pattern: Option<String>,
 
     /// Ignore files with this encoding (case-insensitive)
-    #[arg(short = 'i', long = "ignore", value_name = "ENC")]
+    #[arg(
+        short = 'i',
+        long = "ignore",
+        value_name = "ENC",
+        value_parser = encodings::supported_encoding_parser()
+    )]
     pub ignore_encoding: Option<String>,
 
     /// Additional directory names to exclude
