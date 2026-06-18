@@ -71,8 +71,49 @@ fn directory_scan_batch_format() {
         .arg(&dir)
         .assert()
         .success()
-        .stdout(predicate::str::contains("[SKIP]"))
+        .stdout(predicate::str::contains("SKIP]"))
         .stdout(predicate::str::contains("utf8.txt").or(predicate::str::contains("UTF-8")));
+}
+
+#[test]
+fn batch_output_right_aligns_labels() {
+    let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures");
+    let output = bin()
+        .args(["--color=never", "check", "-d"])
+        .arg(&dir)
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+    let text = String::from_utf8_lossy(&output);
+    assert!(
+        text.contains("UTF-8]") || text.contains("ASCII]"),
+        "expected encoded label in output: {text}"
+    );
+}
+
+#[test]
+fn color_always_emits_ansi() {
+    let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("src");
+    bin()
+        .args(["--color=always", "check", "-d"])
+        .arg(&dir)
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("\x1b["));
+}
+
+#[test]
+fn color_never_no_ansi() {
+    let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("src");
+    bin()
+        .args(["--color=never", "check", "-d"])
+        .arg(&dir)
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("cli.rs"))
+        .stdout(predicate::str::contains("\x1b[").not());
 }
 
 #[test]
@@ -89,7 +130,7 @@ fn binary_file_is_skip_in_batch_mode() {
         ])
         .assert()
         .success()
-        .stdout(predicate::str::contains("[SKIP]"))
+        .stdout(predicate::str::contains("SKIP]"))
         .stdout(predicate::str::contains("binary.dat"));
 }
 

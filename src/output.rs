@@ -1,6 +1,7 @@
 use std::io::{self, Write};
 use std::path::Path;
 
+use crate::color::{ColorWhen, paint_label};
 use crate::detect::{Detection, SkipReason};
 
 #[derive(Debug, Clone)]
@@ -14,6 +15,7 @@ pub struct OutputConfig<'a> {
     pub ignore_encoding: Option<&'a str>,
     pub quiet: bool,
     pub verbose: bool,
+    pub color: ColorWhen,
 }
 
 pub struct Stats {
@@ -21,6 +23,11 @@ pub struct Stats {
     pub printed: usize,
     pub skipped: usize,
     pub ignored: usize,
+}
+
+enum BatchLine<'a> {
+    Encoded { encoding: &'a str, path: &'a Path },
+    Skip { path: &'a Path },
 }
 
 pub fn print_results(
@@ -62,6 +69,7 @@ pub fn print_results(
         return Ok(stats);
     }
 
+    let mut lines: Vec<BatchLine<'_>> = Vec::new();
     for result in results {
         match &result.detection {
             Detection::Encoded(enc) => {
@@ -70,14 +78,17 @@ pub fn print_results(
                     continue;
                 }
                 if !config.quiet {
-                    println!("[{}] {}", display_encoding(enc), display_path(&result.path));
+                    lines.push(BatchLine::Encoded {
+                        encoding: enc,
+                        path: &result.path,
+                    });
                     stats.printed += 1;
                 }
             }
             Detection::Skip(_) => {
                 stats.skipped += 1;
                 if !config.quiet {
-                    println!("[SKIP] {}", display_path(&result.path));
+                    lines.push(BatchLine::Skip { path: &result.path });
                 }
                 if config.verbose
                     && let Detection::Skip(reason) = &result.detection
@@ -89,6 +100,32 @@ pub fn print_results(
                         skip_reason_message(reason)
                     )?;
                 }
+            }
+        }
+    }
+
+    let label_width = lines
+        .iter()
+        .map(|line| match line {
+            BatchLine::Encoded { encoding, .. } => display_encoding(encoding).len(),
+            BatchLine::Skip { .. } => 4, // SKIP
+        })
+        .max()
+        .unwrap_or(0);
+
+    for line in lines {
+        match line {
+            BatchLine::Encoded { encoding, path } => {
+                let inner = format!("{:>label_width$}", display_encoding(encoding));
+                let label = format!("[{inner}]");
+                let painted = paint_label(&label, encoding, config.color);
+                println!("{painted} {}", display_path(path));
+            }
+            BatchLine::Skip { path } => {
+                let inner = format!("{:>label_width$}", "SKIP");
+                let label = format!("[{inner}]");
+                let painted = paint_label(&label, "skip", config.color);
+                println!("{painted} {}", display_path(path));
             }
         }
     }
@@ -122,5 +159,16 @@ fn skip_reason_message(reason: &SkipReason) -> &'static str {
         SkipReason::Binary => "binary content",
         SkipReason::Unknown => "encoding unknown",
         SkipReason::ReadError(_) => "read error",
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn label_width_aligns_gbk_after_utf8() {
+        let utf8 = format!("[{:>5}]", "UTF-8");
+        let gbk = format!("[{:>5}]", "GBK");
+        assert_eq!(utf8, "[UTF-8]");
+        assert_eq!(gbk, "[  GBK]");
     }
 }

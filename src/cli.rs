@@ -2,6 +2,8 @@ use std::path::PathBuf;
 
 use clap::{Args, Parser, Subcommand};
 
+use crate::color::ColorWhen;
+
 pub const DEFAULT_EXCLUDES: &[&str] = &[".git", "node_modules", "target"];
 
 pub const AFTER_HELP: &str = "\
@@ -24,6 +26,15 @@ EXAMPLES:
     after_help = AFTER_HELP
 )]
 pub struct Cli {
+    /// When to colorize encoding labels (`[UTF-8]`, `[SKIP]`, …) in batch output
+    #[arg(
+        long = "color",
+        value_name = "WHEN",
+        default_value = "never",
+        global = true
+    )]
+    pub color: ColorWhen,
+
     #[command(subcommand)]
     pub command: Option<Commands>,
 }

@@ -4,13 +4,28 @@
 .SH NAME
 ecd \- Detect text file character encodings
 .SH SYNOPSIS
-\fBecd\fR [\fB\-h\fR|\fB\-\-help\fR] [\fB\-V\fR|\fB\-\-version\fR] [\fIsubcommands\fR]
+\fBecd\fR [\fB\-\-color\fR] [\fB\-h\fR|\fB\-\-help\fR] [\fB\-V\fR|\fB\-\-version\fR] [\fIsubcommands\fR]
 .SH DESCRIPTION
 Detect text file character encodings.
 .PP
 Supports 38 encodings including UTF\-8, GBK, Big5, Shift_JIS, and Windows code pages.
 Scan files or directories in parallel; single\-file mode prints the encoding name only.
 .SH OPTIONS
+.TP
+\fB\-\-color\fR \fI<WHEN>\fR [default: never]
+When to colorize encoding labels (`[UTF\-8]`, `[SKIP]`, …) in batch output
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+auto: Colorize when stdout is a terminal and `NO_COLOR` is unset
+.IP \(bu 2
+never: Never colorize (default)
+.IP \(bu 2
+always: Always colorize (ANSI escapes; useful for piping to `less \-R`)
+.RE
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 Print help (see a summary with \*(Aq\-h\*(Aq)

@@ -5,6 +5,7 @@ use clap::{CommandFactory, Parser};
 use rayon::prelude::*;
 
 use ecd::cli::{CheckArgs, Cli, Commands};
+use ecd::color::ColorWhen;
 use ecd::detect::detect_file;
 use ecd::output::{FileResult, OutputConfig, print_results, print_stats};
 use ecd::walk::collect_paths;
@@ -32,10 +33,10 @@ fn run() -> anyhow::Result<()> {
         }
     };
 
-    execute_check(args)
+    execute_check(args, cli.color)
 }
 
-fn execute_check(args: CheckArgs) -> anyhow::Result<()> {
+fn execute_check(args: CheckArgs, color: ColorWhen) -> anyhow::Result<()> {
     if let Some(jobs) = args.jobs {
         rayon::ThreadPoolBuilder::new()
             .num_threads(jobs)
@@ -60,6 +61,7 @@ fn execute_check(args: CheckArgs) -> anyhow::Result<()> {
         ignore_encoding,
         quiet: args.quiet,
         verbose: args.verbose,
+        color,
     };
 
     let mut stderr = io::stderr().lock();

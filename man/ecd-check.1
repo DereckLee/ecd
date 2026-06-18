@@ -4,10 +4,25 @@
 .SH NAME
 ecd\-check \- Detect file encoding(s)
 .SH SYNOPSIS
-\fBecd check\fR [\fB\-f\fR|\fB\-\-file\fR] [\fB\-d\fR|\fB\-\-dir\fR] [\fB\-p\fR|\fB\-\-pattern\fR] [\fB\-i\fR|\fB\-\-ignore\fR] [\fB\-e\fR|\fB\-\-exclude\fR] [\fB\-\-no\-default\-excludes\fR] [\fB\-j\fR|\fB\-\-jobs\fR] [\fB\-v\fR|\fB\-\-verbose\fR] [\fB\-q\fR|\fB\-\-quiet\fR] [\fB\-h\fR|\fB\-\-help\fR] 
+\fBecd check\fR [\fB\-\-color\fR] [\fB\-f\fR|\fB\-\-file\fR] [\fB\-d\fR|\fB\-\-dir\fR] [\fB\-p\fR|\fB\-\-pattern\fR] [\fB\-i\fR|\fB\-\-ignore\fR] [\fB\-e\fR|\fB\-\-exclude\fR] [\fB\-\-no\-default\-excludes\fR] [\fB\-j\fR|\fB\-\-jobs\fR] [\fB\-v\fR|\fB\-\-verbose\fR] [\fB\-q\fR|\fB\-\-quiet\fR] [\fB\-h\fR|\fB\-\-help\fR] 
 .SH DESCRIPTION
 Detect file encoding(s)
 .SH OPTIONS
+.TP
+\fB\-\-color\fR \fI<WHEN>\fR [default: never]
+When to colorize encoding labels (`[UTF\-8]`, `[SKIP]`, …) in batch output
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+auto: Colorize when stdout is a terminal and `NO_COLOR` is unset
+.IP \(bu 2
+never: Never colorize (default)
+.IP \(bu 2
+always: Always colorize (ANSI escapes; useful for piping to `less \-R`)
+.RE
 .TP
 \fB\-f\fR, \fB\-\-file\fR \fI<PATH>\fR
 File(s) to check (repeatable)
@@ -37,4 +52,4 @@ Print statistics to stderr
 Suppress normal output (errors only)
 .TP
 \fB\-h\fR, \fB\-\-help\fR
-Print help
+Print help (see a summary with \*(Aq\-h\*(Aq)
