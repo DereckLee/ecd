@@ -1,13 +1,13 @@
 [package]
 name = "ecd"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2024"
 rust-version = "1.85"
 description = "Fast CLI to detect text file encodings (UTF-8, GBK, Shift_JIS, and 35+ more)"
 readme = "README.md"
 license = "MIT"
 authors = ["Dereck <dereckleemj@gmail.com>"]
-repository = "https://github.com/DereckLee/ecd"
+repository = "https://github.com/DereckLee/ecd.git"
 homepage = "https://github.com/DereckLee/ecd"
 documentation = "https://docs.rs/ecd"
 keywords = ["encoding", "charset", "cli", "detector", "utf-8"]

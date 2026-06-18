@@ -3,9 +3,7 @@
 [![crates.io](https://img.shields.io/crates/v/ecd.svg)](https://crates.io/crates/ecd)
 [![license](https://img.shields.io/crates/l/ecd.svg)](https://github.com/DereckLee/ecd/blob/main/LICENSE)
 
-**ecd** is a fast, cross-platform command-line tool for detecting the character encoding of text files.
-
-It is a Rust rewrite of the Node.js [encoding-checker](https://github.com/piecioshka/encoding-checker), designed to be quicker on large trees, easier to script, and free of external tools like `file(1)` or `find(1)`.
+**ecd** is a fast, cross-platform command-line tool for detecting the character encoding of text files. It is designed to be quicker on large trees, easier to script, and free of external tools like `file(1)` or `find(1)`.
 
 ```bash
 ecd check -f man.txt    # gbk
@@ -38,8 +36,9 @@ cargo install ecd
 From source:
 
 ```bash
-git clone https://github.com/DereckLee/ecd
+git clone https://github.com/DereckLee/ecd.git
 cd ecd
+
 cargo install --path .
 ```
 
@@ -130,14 +129,6 @@ make fixtures  # regenerate per-encoding test fixtures
 ```
 
 Every supported encoding has a fixture under `tests/fixtures/encodings/` and a test in `tests/encodings.rs`.
-
-## Publish
-
-```bash
-make check
-make publish-dry-run
-cargo publish --registry crates-io
-```
 
 ## License
 
